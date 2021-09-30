@@ -1,10 +1,12 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "chunk.h"
 #include "common.h"
 
 palette_t palette_new(void) {
 	palette_t pal = {0};
+	pal.last_free = 1;
 	return pal;
 }
 
@@ -14,6 +16,7 @@ static void grow_palette(palette_t *p, size_t amt) {
 	if (mem == NULL)
 		fatalln("palette realloc fail");
 	p->cap = new_cap;
+	memset(mem + p->len, 0, (p->cap - p->len) * sizeof(voxel_t));
 	p->voxels = mem;
 }
 
@@ -29,12 +32,14 @@ u16 palette_add(palette_t *p, voxel_t *v) {
 		p->len = 1;
 		p->type = PALETTE_SMALL;
 		grow_palette(p, 16);
+		p->voxels[0] = VOXEL_AIR;
 	}
 	// See if last free is empty
-	if (voxel_cmp(v, p->voxels + p->last_free)) {
+	if (p->last_free && voxel_cmp(&VOXEL_AIR, p->voxels + p->last_free)) {
 		p->voxels[p->last_free] = *v;
 		size_t last = p->last_free;
 		p->last_free = 0;
+		++p->len;
 		return last;
 	}
 	u64 hole = 0;
@@ -110,6 +115,15 @@ static void promote_large(chunk_t *c) {
 		new[i] = old[i];
 	free(c->voxels);
 	c->voxels = (void *)new;
+}
+
+void chunk_alloc(chunk_t *c) {
+	if (c->palette.type == PALETTE_EMPTY)
+		return;
+	if (c->palette.type == PALETTE_SMALL && c->voxels == NULL) 
+		promote_small(c);
+	else if (c->palette.type == PALETTE_LARGE && c->voxels == NULL)
+		c->voxels = alloc(CHUNK_LEN, sizeof(u16));
 }
 
 void chunk_set(chunk_t *c, u32 x, u32 y, u32 z, u16 id) {

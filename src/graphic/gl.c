@@ -66,10 +66,24 @@ void (*gl_VertexArrayAttribBinding)(GLuint vaobj, GLuint attribindex,
 void (*gl_VertexArrayAttribFormat)(GLuint vaobj, GLuint attribindex, GLint size,
                                    GLenum type, GLboolean normalized,
                                    GLuint relativeoffset);
+void (*gl_VertexArrayAttribIFormat)(GLuint vaobj, GLuint attribindex,
+                                    GLint size, GLenum type,
+                                    GLuint relativeoffset);
 void (*gl_VertexArrayVertexBuffer)(GLuint vaobj, GLuint bindingindex,
                                    GLuint buffer, GLintptr offset,
                                    GLsizei stride);
 void (*gl_Viewport)(GLint x, GLint y, GLsizei width, GLsizei height);
+void (*gl_TextureSubImage3D)(GLuint texture, GLint level, GLint xoffset,
+                             GLint yoffset, GLint zoffset, GLsizei width,
+                             GLsizei height, GLsizei depth, GLenum format,
+                             GLenum type, const void *pixels);
+void (*gl_TextureStorage3D)(GLuint texture, GLsizei levels,
+                            GLenum internalformat, GLsizei width,
+                            GLsizei height, GLsizei depth);
+void (*gl_BindTextureUnit)(GLuint unit, GLuint texture);
+void (*gl_DeleteTextures)(GLsizei n, const GLuint *textures);
+void (*gl_CreateTextures)(GLenum target, GLsizei n, GLuint *textures);
+void (*gl_TextureParameteri)(GLuint texture, GLenum pname, GLint param);
 
 void gl_loadproc(void) {
 	LOADPROC(CreateProgram);
@@ -108,8 +122,15 @@ void gl_loadproc(void) {
 	LOADPROC(UseProgram);
 	LOADPROC(VertexArrayAttribBinding);
 	LOADPROC(VertexArrayAttribFormat);
+	LOADPROC(VertexArrayAttribIFormat);
 	LOADPROC(VertexArrayVertexBuffer);
 	LOADPROC(Viewport);
+	LOADPROC(TextureSubImage3D);
+	LOADPROC(TextureStorage3D);
+	LOADPROC(BindTextureUnit);
+	LOADPROC(DeleteTextures);
+	LOADPROC(CreateTextures);
+	LOADPROC(TextureParameteri);
 }
 
 void gl_loadproc_minimal(void) {

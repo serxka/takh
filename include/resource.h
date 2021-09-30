@@ -9,6 +9,7 @@ struct settings {
 	struct {
 		float yfovd;
 		bool debug;
+		int msaa_samples;
 	} gfx;
 };
 

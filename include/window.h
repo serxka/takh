@@ -6,6 +6,7 @@
 #include "common.h"
 #include "graphic/camera.h"
 #include "graphic/shader.h"
+#include "graphic/texture.h"
 #include "graphic/vertex.h"
 
 #include <GLFW/glfw3.h>
@@ -26,6 +27,7 @@ void window_close(window_t *win);
 
 struct render_state {
 	shader_t chunk_shader;
+	texarr_t chunk_atlas;
 	verts_t *chunks;
 	vecm chunks_v;
 };

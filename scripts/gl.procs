@@ -1,5 +1,9 @@
 GLuint(*gl_CreateProgram)(void);
 GLuint(*gl_CreateShader)(GLenum shaderType);
+void (*gl_BindTextureUnit)(GLuint unit, GLuint texture);
+void (*gl_CreateTextures)(GLenum target, GLsizei n, GLuint *textures);
+void (*gl_DeleteTextures)(GLsizei n, const GLuint *textures);
+void (*gl_TextureParameteri)(GLuint texture, GLenum pname, GLint param);
 void(*gl_AttachShader)(GLuint program, GLuint shader);
 void(*gl_BindVertexArray)(GLuint array);
 void(*gl_Clear)(GLbitfield mask);
@@ -31,8 +35,11 @@ void(*gl_ProgramUniform3f)(GLuint program, GLint location, GLfloat v0, GLfloat v
 void(*gl_ProgramUniform3i)(GLuint program, GLint location, GLint v0, GLint v1, GLint v2);
 void(*gl_ProgramUniformMatrix4fv)(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 void(*gl_ShaderSource)(GLuint shader, GLsizei count, GLchar **string, GLint *length);
+void(*gl_TextureStorage3D)(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth);
+void(*gl_TextureSubImage3D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
 void(*gl_UseProgram)(GLuint program);
 void(*gl_VertexArrayAttribBinding)(GLuint vaobj, GLuint attribindex, GLuint bindingindex);
 void(*gl_VertexArrayAttribFormat)(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean normalized, GLuint relativeoffset);
+void(*gl_VertexArrayAttribIFormat)(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset);
 void(*gl_VertexArrayVertexBuffer)(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 void(*gl_Viewport)(GLint x, GLint y, GLsizei width, GLsizei height);

@@ -13,6 +13,7 @@ camera_t camera_new(vec3 pos) {
 	camera_t cam = {0};
 	glm_vec3_copy(pos, cam.pos);
 	glm_vec3_copy(pos, cam.front);
+	glm_vec3_copy((vec3){0.f, 1.f, 0.f}, cam.up);
 	cam.fov = glm_rad(settings->gfx.yfovd);
 
 	camera_handle_mouse(&cam, 0.f, 0.f);
@@ -30,7 +31,6 @@ void camera_handle_mouse(camera_t *c, float dx, float dy) {
 	              c->front);
 	glm_vec3_normalize(c->front);
 	glm_vec3_crossn(c->front, (vec3){0.f, 1.f, 0.f}, c->right);
-	glm_vec3_crossn(c->right, c->front, c->up);
 }
 
 void camera_handle_key(camera_t *c, vec3 in, float delta) {

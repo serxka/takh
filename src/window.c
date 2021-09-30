@@ -5,8 +5,10 @@
 #include "graphic/camera.h"
 #include "graphic/gl.h"
 #include "graphic/shader.h"
+#include "graphic/texture.h"
 #include "graphic/vertex.h"
 #include "resource.h"
+#include "util/rng.h"
 #include "voxel.h"
 #include "window.h"
 
@@ -86,6 +88,7 @@ window_t *window_init(u32 w, u32 h) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_SAMPLES, settings->gfx.msaa_samples);
 	if (settings->gfx.debug)
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
@@ -159,6 +162,8 @@ static void setup_opengl_state(void) {
 	// Setup basic OpenGL state
 	if (settings->gfx.debug)
 		gl_DebugMessageCallback(gl_debug_cb, NULL);
+	if (settings->gfx.msaa_samples)
+		gl_Enable(GL_MULTISAMPLE);
 	gl_Enable(GL_DEPTH_TEST);
 	gl_Enable(GL_CULL_FACE);
 	gl_FrontFace(GL_CW);
@@ -174,16 +179,34 @@ struct render_state *render_new(window_t *win) {
 	win->cam = cam;
 
 	// Setup our frame buffer clear colour
-	gl_ClearColor(0.85f, 0.61f, 0.66f, 1.f);
+	gl_ClearColor(0.75f, 0.51f, 0.56f, 1.f);
 	// gl_ClearColor(1.f, 1.f, 1.f, 1.f);
 
 	// Setup our chunk render states
 	rs->chunk_shader = shader_compile("chunk.vs", "chunk.fs");
 	rs->chunks_v = vecm_new((void **)&rs->chunks, sizeof(verts_t));
 
+	rs->chunk_atlas = texarr_new("atlas01.png", 2);
+	rng_thread()->seed = 69;
+
 	chunk_t chunk = chunk_new();
-	chunk_setv(&chunk, 0, 0, 0, &(voxel_t){true});
-	chunk_setv(&chunk, 1, 1, 1, &(voxel_t){true});
+	
+	voxel_t vox1 = voxel_new((texid_t[]){0, 0, 0, 0, 0, 0});
+	voxel_t vox2 = voxel_new((texid_t[]){1, 1, 1, 1, 1, 1});
+	palette_add(&chunk.palette, &vox1);
+	palette_add(&chunk.palette, &vox2);
+	chunk_alloc(&chunk);
+	
+	for (u32 x = 0; x < CHUNK_H; ++x) {
+		for (u32 y = 0; y < CHUNK_D; ++y) {
+			u32 height = perlin_smpl2d(x, y, 0.05, 4) * 20.0;
+			double type = perlin_smpl2d(x, y, 0.3, 4);
+			u16 id = palette_find(&chunk.palette, type > 0.3 ? &vox2 : &vox1);
+			for (u32 i = 0; i < height; ++i) {
+				chunk_set(&chunk, x, i, y, id);
+			}
+		}
+	}
 	verts_t mesh = chunk_mesh(&chunk);
 
 	vecm_push(&rs->chunks_v, (void **)&rs->chunks, &mesh);
@@ -207,6 +230,7 @@ void render(window_t *win, struct render_state *rs) {
 	set_uni_mat4(shdr, 0, view);
 	set_uni_mat4(shdr, 1, proj);
 	set_uni_vec3(shdr, 2, (vec3){0.f, 0.f, 0.f});
+	texarr_bind(&rs->chunk_atlas, 0);
 
 	for (u64 i = 0; i < rs->chunks_v.len; ++i) {
 		verts_draw(rs->chunks + i);

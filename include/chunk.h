@@ -36,6 +36,7 @@ typedef struct chunk {
 } chunk_t;
 
 chunk_t chunk_new(void);
+void chunk_alloc(chunk_t *c);
 void chunk_set(chunk_t *c, u32 x, u32 y, u32 z, u16 id);
 void chunk_setv(chunk_t *c, u32 x, u32 y, u32 z, voxel_t *v);
 voxel_t *chunk_get(chunk_t *c, u32 x, u32 y, u32 z);

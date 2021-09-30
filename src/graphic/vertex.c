@@ -14,8 +14,14 @@ verts_t verts_create(const void *data, u32 count,
 	const enum AttributeType *ty = types;
 	while (*ty)
 		switch (*ty++) {
+		case ATTRIB_BYTE1:
+			vert_size += 1;
+			break;
 		case ATTRIB_BYTE3:
 			vert_size += 3;
+			break;
+		case ATTRIB_UINT1:
+			vert_size += 4;
 			break;
 		case ATTRIB_FLOAT2:
 			vert_size += 8;
@@ -37,13 +43,26 @@ verts_t verts_create(const void *data, u32 count,
 		// Enable our vertex attribute on index
 		gl_EnableVertexArrayAttrib(vao, index);
 		switch (*types++) {
-		case ATTRIB_BYTE3:
+		case ATTRIB_BYTE1:
 			// Set the binding onto our vao
 			gl_VertexArrayAttribBinding(vao, index, 0);
 			// The attribute format
-			gl_VertexArrayAttribFormat(vao, index, 3, GL_BYTE,
-			                           GL_FALSE, offset);
+			gl_VertexArrayAttribIFormat(vao, index, 1,
+			                            GL_UNSIGNED_BYTE, offset);
+			offset += 1;
+			break;
+		case ATTRIB_BYTE3:
+			gl_VertexArrayAttribBinding(vao, index, 0);
+			gl_VertexArrayAttribFormat(vao, index, 3,
+			                           GL_UNSIGNED_BYTE, GL_FALSE,
+			                           offset);
 			offset += 3;
+			break;
+		case ATTRIB_UINT1:
+			gl_VertexArrayAttribBinding(vao, index, 0);
+			gl_VertexArrayAttribIFormat(vao, index, 1,
+			                            GL_UNSIGNED_INT, offset);
+			offset += 4;
 			break;
 		case ATTRIB_FLOAT2:
 			gl_VertexArrayAttribBinding(vao, index, 0);
@@ -54,7 +73,7 @@ verts_t verts_create(const void *data, u32 count,
 		case ATTRIB_FLOAT3:
 			gl_VertexArrayAttribBinding(vao, index, 0);
 			gl_VertexArrayAttribFormat(vao, index, 3, GL_FLOAT,
-			                           GL_FALSE, 0);
+			                           GL_FALSE, offset);
 			offset += 12;
 			break;
 		case ATTRIB_END:

@@ -14,9 +14,11 @@ typedef struct verts {
 
 enum AttributeType {
 	ATTRIB_END = 0,
-	ATTRIB_FLOAT2 = 1,
+	ATTRIB_BYTE1 = 1,
+	ATTRIB_BYTE3,
+	ATTRIB_UINT1,
+	ATTRIB_FLOAT2,
 	ATTRIB_FLOAT3,
-	ATTRIB_BYTE3
 };
 
 verts_t verts_create(const void *data, u32 count,

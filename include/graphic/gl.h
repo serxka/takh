@@ -59,10 +59,25 @@ extern void (*gl_VertexArrayAttribFormat)(GLuint vaobj, GLuint attribindex,
                                           GLint size, GLenum type,
                                           GLboolean normalized,
                                           GLuint relativeoffset);
+extern void (*gl_VertexArrayAttribIFormat)(GLuint vaobj, GLuint attribindex,
+                                           GLint size, GLenum type,
+                                           GLuint relativeoffset);
 extern void (*gl_VertexArrayVertexBuffer)(GLuint vaobj, GLuint bindingindex,
                                           GLuint buffer, GLintptr offset,
                                           GLsizei stride);
 extern void (*gl_Viewport)(GLint x, GLint y, GLsizei width, GLsizei height);
+extern void (*gl_TextureSubImage3D)(GLuint texture, GLint level, GLint xoffset,
+                                    GLint yoffset, GLint zoffset, GLsizei width,
+                                    GLsizei height, GLsizei depth,
+                                    GLenum format, GLenum type,
+                                    const void *pixels);
+extern void (*gl_TextureStorage3D)(GLuint texture, GLsizei levels,
+                                   GLenum internalformat, GLsizei width,
+                                   GLsizei height, GLsizei depth);
+extern void (*gl_BindTextureUnit)(GLuint unit, GLuint texture);
+extern void (*gl_DeleteTextures)(GLsizei n, const GLuint *textures);
+extern void (*gl_CreateTextures)(GLenum target, GLsizei n, GLuint *textures);
+extern void (*gl_TextureParameteri)(GLuint texture, GLenum pname, GLint param);
 
 void gl_loadproc(void);
 void gl_loadproc_minimal(void);

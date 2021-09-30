@@ -110,6 +110,7 @@ struct settings *res_settings(void) {
 			.gfx = {
 				.yfovd = 90,
 				.debug = true,
+				.msaa_samples = 4,
 			}
 		};
 		// clang-format on
