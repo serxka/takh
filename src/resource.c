@@ -85,10 +85,10 @@ u8 *res_request(const char *path, u64 *len_out) {
 	u8 *last = mem + HEADER_SIZE;
 	for (size_t i = 0; i < count; ++i) {
 		if (strncmp((char *)last, path, 1025)) {
-			size_t strlen = strnlen((char *)last, 1025);
-			if (strlen == 1025)
+			size_t slen = strlen((char *)last, 1025);
+			if (slen == 1025)
 				return errorln("asset path was too long"), NULL;
-			last += strlen + 1 + 8;
+			last += slen + 1 + 8;
 			continue;
 		}
 		while (*last++)
